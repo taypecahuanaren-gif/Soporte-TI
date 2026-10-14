@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Propuesta estratégica · Rediseño del proceso de soporte TI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg-soft:#FFF5EC; --surface:#FFFFFF; --surface-2:#FFF9F4;
+  --ink:#241D18; --ink-2:#5B4E44; --line:#EBD9C9; --line-strong:#C9A98F;
+  --o-500:#FF6B00; --o-600:#E65A00; --o-700:#B84700; --o-100:#FFE2CC; --o-50:#FFF1E4;
+  --on-orange:#FFFFFF; --ok:#1F7A4D; --bad:#B3261E;
+  --lane-a:#FFFFFF; --lane-b:#FFF7F0; --lane-label:#FFE2CC;
+  --radius:14px;
+  --f-display:'Archivo','Arial Narrow','Helvetica Neue',Arial,sans-serif;
+  --f-body:'IBM Plex Sans','Segoe UI',Roboto,Arial,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16120F; --bg-soft:#1E1814; --surface:#201A15; --surface-2:#271F19;
+    --ink:#F6EEE7; --ink-2:#C7B8AB; --line:#3A2F27; --line-strong:#6B5848;
+    --o-500:#FF7A1A; --o-600:#FF8D3A; --o-700:#FFA264; --o-100:#4A2A12; --o-50:#2B1C11;
+    --lane-a:#201A15; --lane-b:#271F19; --lane-label:#4A2A12; --ok:#5BD08F; --bad:#FF8A80;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16120F; --bg-soft:#1E1814; --surface:#201A15; --surface-2:#271F19;
+  --ink:#F6EEE7; --ink-2:#C7B8AB; --line:#3A2F27; --line-strong:#6B5848;
+  --o-500:#FF7A1A; --o-600:#FF8D3A; --o-700:#FFA264; --o-100:#4A2A12; --o-50:#2B1C11;
+  --lane-a:#201A15; --lane-b:#271F19; --lane-label:#4A2A12; --ok:#5BD08F; --bad:#FF8A80;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.1;margin:0;letter-spacing:-.01em}
+p{margin:0 0 1em;max-width:68ch}
+a{color:var(--o-700)}
+:focus-visible{outline:3px solid var(--o-500);outline-offset:3px;border-radius:4px}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.brand{font-family:var(--f-display);font-weight:800;font-stretch:90%;font-size:1.02rem;white-space:nowrap;display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand i{width:14px;height:14px;background:var(--o-500);display:inline-block;border-radius:3px}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav li a{display:block;padding:8px 12px;border-radius:8px;font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;white-space:nowrap}
+.nav li a:hover{background:var(--o-50);color:var(--ink)}
+.nav li a.active{background:var(--o-500);color:#fff}
+
+/* ---------- hero ---------- */
+.hero{padding:72px 0 64px;background:var(--bg);border-bottom:6px solid var(--o-500)}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:56px;align-items:start}
+.hero h1{font-size:clamp(2.3rem,5.6vw,4.4rem);font-weight:850;font-stretch:88%;letter-spacing:-.025em}
+.hero .lead{font-size:1.2rem;color:var(--ink-2);margin:24px 0 32px;max-width:58ch}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{font:inherit;font-weight:600;font-size:1rem;padding:13px 22px;border-radius:10px;border:2px solid var(--o-500);cursor:pointer;text-decoration:none;display:inline-block;min-height:44px}
+.btn.primary{background:var(--o-500);color:#1b0e04}
+.btn.primary:hover{background:var(--o-600)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--o-50)}
+.legendbox{background:var(--o-500);color:#1b0e04;border-radius:var(--radius);padding:28px}
+.legendbox h2{font-size:1.35rem;margin-bottom:6px;font-weight:800}
+.legendbox p{font-size:.95rem;margin-bottom:18px}
+.legendbox dl{margin:0;display:grid;gap:12px}
+.legendbox dt{margin:0}
+.legendbox dd{margin:4px 0 0;font-size:.9rem;line-height:1.4}
+.legendbox .tag{background:#fff;color:#241D18;border-color:#241D18}
+
+/* ---------- tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;line-height:1;padding:6px 10px;border-radius:999px;border:1.5px solid;white-space:nowrap;vertical-align:middle}
+.tag::before{font-weight:800}
+.t-dato{background:var(--surface);color:var(--ink);border-color:var(--ink)} .t-dato::before{content:"✓"}
+.t-meta{background:var(--o-700);color:#fff;border-color:var(--o-700)} .t-meta::before{content:"◎"}
+:root[data-theme="dark"] .t-meta{color:#1b0e04}
+.t-sup{background:var(--o-100);color:var(--ink);border:1.5px dotted var(--o-700)} .t-sup::before{content:"≈"}
+.t-pend{background:transparent;color:var(--o-700);border:1.5px dashed var(--o-700)} .t-pend::before{content:"?"}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .t-meta{color:#1b0e04}}
+
+/* ---------- sections ---------- */
+section.sec{padding:84px 0}
+section.sec.soft{background:var(--bg-soft)}
+.sec-head{margin-bottom:40px;max-width:760px}
+.sec-head h2{font-size:clamp(1.8rem,3.6vw,2.7rem);font-weight:800;font-stretch:90%}
+.sec-head p{color:var(--ink-2);margin-top:14px;font-size:1.05rem}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.card.accent{border-top:5px solid var(--o-500)}
+.card h3{font-size:1.2rem;font-weight:750;margin-bottom:12px}
+.card .tag{margin-bottom:14px}
+.card ul{margin:0;padding-left:1.15em}
+.card li{margin-bottom:.5em}
+.card li::marker{color:var(--o-600)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 18px;margin:0}
+.kv dt{font-weight:600;color:var(--ink-2);font-size:.92rem}
+.kv dd{margin:0}
+.note{border-left:5px solid var(--o-500);background:var(--o-50);padding:16px 20px;border-radius:0 10px 10px 0;margin-top:28px;max-width:80ch;font-size:.97rem}
+.note p:last-child{margin:0}
+.bignum{font-family:var(--f-display);font-weight:850;font-size:3rem;color:var(--o-700);line-height:1}
+
+/* causes */
+.causes{counter-reset:c;display:grid;gap:14px;list-style:none;margin:0;padding:0}
+.causes li{display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.causes li::before{counter-increment:c;content:counter(c);display:grid;place-items:center;width:44px;height:44px;border-radius:10px;background:var(--o-500);color:#1b0e04;font-family:var(--f-display);font-weight:800;font-size:1.2rem}
+
+/* alignment */
+.align-rows{display:grid;gap:14px}
+.align-row{display:grid;grid-template-columns:1fr 54px 1fr;gap:0;align-items:stretch}
+.align-row>div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.align-row .arrow{background:none;border:0;display:grid;place-items:center;color:var(--o-600);font-size:1.6rem;font-weight:800;padding:0}
+.align-row .right{border-color:var(--o-500);background:var(--o-50)}
+.align-row small{display:block;color:var(--ink-2);font-size:.82rem;margin-bottom:4px;font-weight:600}
+
+/* compare */
+.seg{display:inline-flex;border:2px solid var(--o-500);border-radius:10px;overflow:hidden;margin-bottom:24px;flex-wrap:wrap}
+.seg button{font:inherit;font-weight:600;font-size:.95rem;padding:10px 18px;background:transparent;color:var(--ink);border:0;cursor:pointer;min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--o-500);color:#1b0e04}
+.cmp{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.cmp-row{display:grid;grid-template-columns:170px 1fr 1fr;border-top:1px solid var(--line)}
+.cmp-row:first-child{border-top:0}
+.cmp-row>div{padding:18px 20px}
+.cmp-row .lbl{background:var(--surface-2);font-weight:600;font-family:var(--f-display);font-size:1rem}
+.cmp-head .asis,.cmp-head .tobe{font-family:var(--f-display);font-weight:800;font-size:1.1rem}
+.cmp-head>div{background:var(--surface-2)}
+.cmp-head .tobe{background:var(--o-500);color:#1b0e04}
+.cmp-row .tobe{background:var(--o-50)}
+.cmp-head .tobe{background:var(--o-500)}
+.cmp[data-view="asis"] .tobe,.cmp[data-view="tobe"] .asis{display:none}
+.cmp[data-view="asis"] .cmp-row,.cmp[data-view="tobe"] .cmp-row{grid-template-columns:170px 1fr}
+.cmp .tag{margin-top:10px;display:flex;width:fit-content}
+.nav-chip{display:inline-block;font-size:.78rem;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--o-100);color:var(--ink);margin-left:6px;vertical-align:middle}
+
+/* bpmn */
+.bpmn-box{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden;margin-top:48px}
+.bpmn-box header{padding:22px 26px;border-bottom:1px solid var(--line);display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.bpmn-box h3{font-size:1.3rem;font-weight:800}
+.bpmn-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.bpmn-scroll svg{display:block;min-width:1100px;width:100%;height:auto}
+.hint{display:none;font-size:.85rem;color:var(--ink-2);padding:10px 26px 0}
+@media (max-width:1180px){.hint{display:block}}
+.bpmn-legend{display:flex;flex-wrap:wrap;gap:10px 24px;padding:18px 26px;border-top:1px solid var(--line);font-size:.88rem;color:var(--ink-2)}
+.bpmn-legend span{display:inline-flex;align-items:center;gap:8px}
+.bpmn-legend svg{min-width:0;width:30px;height:20px;display:inline-block}
+.lane{stroke:var(--line-strong);stroke-width:1}
+.lane.a{fill:var(--lane-a)} .lane.b{fill:var(--lane-b)}
+.lane-lbl{fill:var(--lane-label);stroke:var(--line-strong)}
+.lane-txt{font-family:var(--f-display);font-weight:800;font-size:15px;fill:var(--ink)}
+.task{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.task.auto{fill:var(--o-100);stroke:var(--o-700);stroke-width:2}
+.gw{fill:var(--surface);stroke:var(--ink);stroke-width:1.8}
+.ev-start{fill:var(--surface);stroke:var(--ink);stroke-width:1.8}
+.ev-end{fill:var(--surface);stroke:var(--ink);stroke-width:4.5}
+.flow{fill:none;stroke:var(--ink);stroke-width:1.6}
+.flow.ret{stroke:var(--o-600);stroke-dasharray:6 4;stroke-width:2}
+.arrowhead{fill:var(--ink)}
+.arrowhead.o{fill:var(--o-600)}
+.t{font-family:var(--f-body);font-size:11.5px;fill:var(--ink);text-anchor:middle}
+.t.s{font-size:11px;fill:var(--ink-2);text-anchor:start}
+.t.b{font-weight:600;fill:var(--o-700);text-anchor:start;font-size:11.5px}
+.t.m{text-anchor:middle;fill:var(--ink-2);font-size:11px}
+
+/* indicator sheets */
+.ficha{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.ficha header{background:var(--o-500);color:#1b0e04;padding:22px 26px}
+.ficha header h3{font-size:1.35rem;font-weight:800}
+.ficha header span{font-size:.85rem;font-weight:600;display:block;margin-bottom:6px}
+.ficha .body{padding:8px 26px 26px}
+.ficha .row{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+.ficha .row:last-child{border-bottom:0}
+.ficha .row dt{font-weight:600;color:var(--ink-2);font-size:.92rem}
+.ficha .row dd{margin:0}
+.formula{font-family:var(--f-display);font-weight:650;font-size:1.02rem;background:var(--o-50);border-radius:8px;padding:10px 12px;display:block;line-height:1.35}
+.ficha dl{margin:0}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line);background:var(--surface-2);flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:600;padding:16px 24px;background:transparent;border:0;border-bottom:4px solid transparent;color:var(--ink-2);cursor:pointer;min-height:48px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--o-500);background:var(--surface)}
+.panel{padding:30px;display:none}
+.panel.on{display:block}
+.sim-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:36px}
+.fields{display:grid;gap:20px;align-content:start}
+.field label{display:block;font-weight:600;margin-bottom:6px;font-size:.95rem}
+.field .help{display:block;font-size:.82rem;color:var(--ink-2);margin-top:5px}
+.input-row{display:flex;gap:10px;align-items:center}
+input[type=number]{font:inherit;width:100%;padding:11px 13px;border:2px solid var(--line-strong);border-radius:10px;background:var(--bg);color:var(--ink);min-height:46px}
+input[type=number]:focus{outline:3px solid var(--o-500);outline-offset:1px;border-color:var(--o-500)}
+input[aria-invalid="true"]{border-color:var(--bad)}
+input[type=range]{width:100%;accent-color:var(--o-500);min-height:28px}
+.unit{white-space:nowrap;font-size:.88rem;color:var(--ink-2);min-width:52px}
+.err{color:var(--bad);font-size:.85rem;font-weight:600;min-height:1.2em;margin-top:4px}
+.sim-banner{background:var(--o-500);color:#1b0e04;font-weight:700;border-radius:10px;padding:14px 18px;margin-bottom:22px;font-size:.97rem;line-height:1.4;display:flex;gap:12px;align-items:flex-start}
+.sim-banner b{background:#1b0e04;color:var(--o-500);border-radius:6px;padding:2px 8px;font-size:.78rem;white-space:nowrap;margin-top:2px}
+.results{display:grid;gap:14px;align-content:start}
+.res{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:var(--surface-2)}
+.res.main{border:2px solid var(--o-500);background:var(--o-50)}
+.res small{display:block;color:var(--ink-2);font-size:.85rem;font-weight:600}
+.res strong{display:block;font-family:var(--f-display);font-weight:850;font-size:2.1rem;line-height:1.15;color:var(--ink);word-break:break-word}
+.res.main strong{color:var(--o-700);font-size:2.4rem}
+.res code{font-family:var(--f-body);font-size:.82rem;color:var(--ink-2);display:block;margin-top:4px}
+.bar{height:20px;border-radius:6px;overflow:hidden;background:var(--line);display:flex;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:var(--o-500);transition:width .25s}
+.bar-lbl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink-2);gap:10px;flex-wrap:wrap}
+.status{display:inline-block;margin-top:8px;font-weight:700;font-size:.9rem;padding:5px 12px;border-radius:999px;border:2px solid}
+.status.ok{color:var(--ok);border-color:var(--ok)}
+.status.no{color:var(--bad);border-color:var(--bad)}
+.sim-actions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.sub{font-family:var(--f-display);font-weight:800;font-size:1.15rem;margin:6px 0 16px}
+hr.sp{border:0;border-top:1px solid var(--line);margin:26px 0}
+
+/* register */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.filters button{font:inherit;font-weight:600;font-size:.92rem;padding:9px 16px;border-radius:999px;border:2px solid var(--o-500);background:transparent;color:var(--ink);cursor:pointer;min-height:44px}
+.filters button[aria-pressed="true"]{background:var(--o-500);color:#1b0e04}
+.reg{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.reg li{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.reg li[hidden]{display:none}
+.reg .where{font-size:.82rem;color:var(--ink-2);display:block;margin-top:3px}
+
+/* ai */
+.ai-col h3{display:flex;gap:12px;align-items:center}
+.ai-col h3 span{display:inline-grid;place-items:center;min-width:38px;height:38px;border-radius:9px;background:var(--o-500);color:#1b0e04;font-size:1.05rem}
+
+footer{background:var(--ink);color:#F6EEE7;padding:44px 0 56px;font-size:.92rem}
+footer p{color:#d9c9ba;margin-bottom:.5em}
+:root[data-theme="dark"] footer{background:#0d0a08}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) footer{background:#0d0a08}}
+
+/* responsive */
+@media (max-width:900px){
+  .hero{padding:48px 0 44px}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .sim-grid{grid-template-columns:1fr;gap:26px}
+  .align-row{grid-template-columns:1fr}
+  .align-row .arrow{transform:rotate(90deg);height:36px}
+  section.sec{padding:60px 0}
+  .brand span.long{display:none}
+  .cmp-row,.cmp[data-view="asis"] .cmp-row,.cmp[data-view="tobe"] .cmp-row{grid-template-columns:1fr}
+  .cmp-head .lbl{display:none}
+  .cmp-row .lbl{padding-bottom:6px}
+  .cmp-row .asis::before,.cmp-row .tobe::before{content:attr(data-h);display:block;font-weight:700;font-size:.8rem;color:var(--o-700);margin-bottom:4px}
+  .cmp-head{display:none}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .wrap{width:min(1180px,100% - 28px)}
+  .kv,.ficha .row,.reg li{grid-template-columns:1fr;gap:4px}
+  .panel{padding:20px 16px}
+  .card{padding:20px}
+  .tabs button{flex:1;padding:14px 10px;font-size:.9rem}
+  .res strong{font-size:1.8rem}.res.main strong{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><i aria-hidden="true"></i>Soporte TI<span class="long">· Propuesta</span></a>
+    <ul>
+      <li><a href="#diagnostico">Diagnóstico</a></li>
+      <li><a href="#propuesta">Propuesta</a></li>
+      <li><a href="#alineacion">Alineación</a></li>
+      <li><a href="#asis-tobe">AS-IS / TO-BE</a></li>
+      <li><a href="#indicadores">Indicadores</a></li>
+      <li><a href="#simulador">Simulador</a></li>
+      <li><a href="#ia">Uso de IA</a></li>
+      <li><a href="#registro">Pendientes</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Rediseñar el soporte TI para que los casos frecuentes no dependan de pocos especialistas</h1>
+      <p class="lead">Propuesta estratégica de mejora del proceso de atención de soporte TI: automatización, conocimiento estandarizado y tiempos objetivo (SLA) para reducir retrasos y liberar la carga de los especialistas.</p>
+      <div class="btns">
+        <a class="btn primary" href="#bpmn">Ver el diagrama TO-BE</a>
+        <a class="btn ghost" href="#simulador">Probar el simulador</a>
+      </div>
+    </div>
+    <aside class="legendbox" aria-labelledby="leg-t">
+      <h2 id="leg-t">Cómo leer esta página</h2>
+      <p>Solo se usan los datos del equipo. Cada afirmación lleva una etiqueta que dice qué tan firme es:</p>
+      <dl>
+        <div><dt><span class="tag t-dato">Dato del caso</span></dt><dd>Proviene de los documentos del equipo.</dd></div>
+        <div><dt><span class="tag t-meta">Meta propuesta</span></dt><dd>Objetivo a lograr; aún no es un resultado.</dd></div>
+        <div><dt><span class="tag t-sup">Supuesto</span></dt><dd>Se asume para poder avanzar; debe confirmarse.</dd></div>
+        <div><dt><span class="tag t-pend">Pendiente de validar</span></dt><dd>Información que falta y no se inventó.</dd></div>
+      </dl>
+    </aside>
+  </div>
+</header>
+
+<main>
+
+<!-- 1 DIAGNÓSTICO -->
+<section class="sec" id="diagnostico" aria-labelledby="h-diag">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-diag">1. Diagnóstico y evidencia</h2>
+      <p>Qué ocurre hoy en la atención de soporte TI, cómo se sabe y por qué pasa.</p>
+    </div>
+
+    <div class="grid g2">
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Proceso y problema</h3>
+        <dl class="kv">
+          <dt>Proceso</dt><dd>Atención de soporte TI.</dd>
+          <dt>Problema</dt><dd>Retrasos significativos e incidencias críticas por dependencia de pocos especialistas, falta de estandarización en el análisis de casos y ausencia de tiempos de respuesta objetivos (SLA).</dd>
+        </dl>
+      </article>
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Evidencia</h3>
+        <ul>
+          <li>Registro de incidencias pendientes por falta de personal especializado.</li>
+          <li>El FODA/SIPOC indica baja disponibilidad del personal y falta de indicadores.</li>
+          <li>La actividad «Analizar casos para resolverlo» se identifica como <strong>No Agrega Valor (NAV)</strong> con alto retraso.</li>
+        </ul>
+      </article>
+    </div>
+
+    <h3 style="font-size:1.4rem;margin:44px 0 18px">Causas relevantes <span class="tag t-dato" style="margin-left:8px">Dato del caso</span></h3>
+    <ol class="causes">
+      <li><div><strong>Sin modelo de escalamiento multinivel.</strong> No existe un modelo estructurado para escalar los casos entre niveles de atención.</div></li>
+      <li><div><strong>Sin procedimientos ni base de conocimientos.</strong> Los casos frecuentes no cuentan con procedimientos estandarizados ni conocimiento documentado.</div></li>
+      <li><div><strong>Sin soluciones automáticas o de autoservicio.</strong> Todo el análisis recae en el personal técnico.</div></li>
+    </ol>
+
+    <div class="note">
+      <p><span class="tag t-pend">Pendiente de validar</span></p>
+      <p style="margin-top:10px">La evidencia es cualitativa. Falta cuantificarla: cantidad de incidencias pendientes, horas de retraso de la actividad NAV y volumen mensual de tickets. Estas cifras no se incluyen porque no fueron proporcionadas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 PROPUESTA -->
+<section class="sec soft" id="propuesta" aria-labelledby="h-prop">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-prop">2. Objetivo y alcance</h2>
+      <p>La propuesta rediseña el proceso en lugar de mejorarlo de forma incremental.</p>
+    </div>
+    <div class="grid g2">
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Objetivo</h3>
+        <p>Transformar y rediseñar el proceso de soporte TI mediante la <strong>automatización</strong>, la <strong>estandarización de conocimientos</strong> y el <strong>establecimiento de tiempos objetivo (SLA)</strong>.</p>
+      </article>
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Alcance</h3>
+        <p>Proceso integral de atención de soporte TI, de punta a punta:</p>
+        <ul>
+          <li>Recepción y registro de la solicitud</li>
+          <li>Resolución</li>
+          <li>Verificación y cierre del ticket</li>
+        </ul>
+      </article>
+    </div>
+    <article class="card" style="margin-top:20px">
+      <span class="tag t-meta">Meta propuesta</span>
+      <h3>Beneficios esperados</h3>
+      <div class="grid g2" style="gap:12px 40px">
+        <ul style="margin:0">
+          <li>Reducción sustancial del tiempo de respuesta y resolución.</li>
+          <li>Eliminación de cuellos de botella.</li>
+        </ul>
+        <ul style="margin:0">
+          <li>Redistribución eficiente de las cargas de trabajo.</li>
+          <li>Mejora de la experiencia del usuario o cliente.</li>
+        </ul>
+      </div>
+      <p style="margin:16px 0 0;color:var(--ink-2);font-size:.92rem">Son beneficios esperados, no resultados medidos. No se les asignó ninguna cifra.</p>
+    </article>
+  </div>
+</section>
+
+<!-- 3 ALINEACIÓN -->
+<section class="sec" id="alineacion" aria-labelledby="h-ali">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-ali">3. Alineación estratégica</h2>
+      <p>La propuesta responde a dos exigencias descritas en los documentos: aliviar a los especialistas y cumplir lo que la gerencia pide al servicio.</p>
+    </div>
+
+    <div class="grid g2" style="margin-bottom:34px">
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Liberar la sobrecarga de los especialistas técnicos</h3>
+        <p style="margin:0">Los casos repetitivos se atienden con conocimiento estandarizado y autoservicio, y solo se escala lo que lo requiere.</p>
+      </article>
+      <article class="card accent">
+        <span class="tag t-dato">Dato del caso</span>
+        <h3>Cumplir las exigencias gerenciales</h3>
+        <p style="margin:0">Desempeño, control de calidad y eficiencia del servicio.</p>
+      </article>
+    </div>
+
+    <h3 style="font-size:1.3rem;margin-bottom:6px">De la exigencia a la medida</h3>
+    <p style="color:var(--ink-2);margin-bottom:18px"><span class="tag t-sup">Supuesto</span> &nbsp;Esta vinculación la propone el equipo para ordenar la lectura; debe confirmarse con la gerencia.</p>
+    <div class="align-rows">
+      <div class="align-row"><div><small>Exigencia gerencial</small>Eficiencia del servicio</div><div class="arrow" aria-hidden="true">→</div><div class="right"><small>Se mide con</small>Indicador 1 · Tiempo promedio de resolución (MTTR)</div></div>
+      <div class="align-row"><div><small>Exigencia gerencial</small>Desempeño y control de calidad</div><div class="arrow" aria-hidden="true">→</div><div class="right"><small>Se mide con</small>Indicador 2 · Cumplimiento del SLA de atención</div></div>
+      <div class="align-row"><div><small>Necesidad interna</small>Liberar la sobrecarga de especialistas</div><div class="arrow" aria-hidden="true">→</div><div class="right"><small>Se explora con</small>Simulador · tiempo ahorrado por automatización</div></div>
+    </div>
+
+    <div class="note">
+      <p><span class="tag t-pend">Pendiente de validar</span></p>
+      <p style="margin-top:10px">Los documentos no citan objetivos institucionales formales. Por eso no se atribuyó la propuesta a ningún plan, política o meta institucional específicos. Si existen, deben incorporarse tras confirmarlos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 AS-IS / TO-BE -->
+<section class="sec soft" id="asis-tobe" aria-labelledby="h-cmp">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-cmp">4. AS-IS frente a TO-BE</h2>
+      <p>Cómo se atiende hoy y cómo se propone atender. Las actividades NAV son las que no agregan valor al servicio.</p>
+    </div>
+
+    <div class="seg" role="group" aria-label="Vista de la comparación">
+      <button type="button" data-view="both" aria-pressed="true">Comparar</button>
+      <button type="button" data-view="asis" aria-pressed="false">Solo AS-IS</button>
+      <button type="button" data-view="tobe" aria-pressed="false">Solo TO-BE</button>
+    </div>
+
+    <div class="cmp" id="cmp" data-view="both">
+      <div class="cmp-row cmp-head"><div class="lbl">Actividad o control</div><div class="asis">AS-IS · cómo se hace hoy</div><div class="tobe">TO-BE · cómo se propone</div></div>
+
+      <div class="cmp-row"><div class="lbl">Registro de la solicitud</div>
+        <div class="asis" data-h="AS-IS">Registro manual.</div>
+        <div class="tobe" data-h="TO-BE">Formularios o validaciones automáticas.</div></div>
+
+      <div class="cmp-row"><div class="lbl">Revisión de la solicitud</div>
+        <div class="asis" data-h="AS-IS">Revisión de solicitud <span class="nav-chip">NAV-N</span></div>
+        <div class="tobe" data-h="TO-BE">Validación simplificada mediante formularios o validaciones automáticas.</div></div>
+
+      <div class="cmp-row"><div class="lbl">Diagnóstico</div>
+        <div class="asis" data-h="AS-IS">Diagnóstico del caso.</div>
+        <div class="tobe" data-h="TO-BE"><span class="tag t-pend">Pendiente de validar</span><br>Los documentos no detallan cambios en esta actividad.</div></div>
+
+      <div class="cmp-row"><div class="lbl">Analizar casos para resolverlo</div>
+        <div class="asis" data-h="AS-IS">Análisis repetitivo de cada caso <span class="nav-chip">NAV</span> con alto retraso.</div>
+        <div class="tobe" data-h="TO-BE">Se sustituye o reduce con una base de conocimientos y autoservicio.</div></div>
+
+      <div class="cmp-row"><div class="lbl">Compuertas y controles</div>
+        <div class="asis" data-h="AS-IS">La decisión depende de si el análisis requiere escalamiento manual o supera un límite de horas.</div>
+        <div class="tobe" data-h="TO-BE">Reglas claras de escalamiento con límite de tiempo: <strong>máximo 2 horas</strong>. <span class="tag t-meta">Meta propuesta</span></div></div>
+    </div>
+    <p style="margin-top:14px;font-size:.9rem;color:var(--ink-2)"><span class="tag t-dato">Dato del caso</span> &nbsp;Todas las filas provienen de los documentos del equipo, salvo la indicada como pendiente.</p>
+
+    <!-- BPMN -->
+    <div class="bpmn-box" id="bpmn">
+      <header>
+        <div>
+          <h3>Diagrama BPMN TO-BE</h3>
+          <p style="margin:6px 0 0;color:var(--ink-2);font-size:.95rem">Cuatro carriles, compuertas exclusivas y dos retornos. Los casos devueltos y las verificaciones no conformes vuelven al análisis.</p>
+        </div>
+        <span class="tag t-sup">Supuesto: flujo propuesto</span>
+      </header>
+      <p class="hint">Desliza horizontalmente para ver el diagrama completo.</p>
+      <div class="bpmn-scroll" tabindex="0" role="region" aria-label="Diagrama BPMN TO-BE, desplazable">
+<svg viewBox="0 0 1440 560" role="img" aria-labelledby="bT bD" xmlns="http://www.w3.org/2000/svg">
+  <title id="bT">Diagrama BPMN TO-BE del proceso de atención de soporte TI</title>
+  <desc id="bD">El cliente registra la solicitud en un formulario. El analista valida; si no es válida, la devuelve al cliente. Si es válida, consulta la base de conocimientos. Si hay solución, la resuelve y registra. Si no, analiza el caso con un límite de 2 horas; si no se resuelve, escala al especialista, que devuelve la solución al analista. El supervisor verifica y cierra el ticket; si no es conforme, el caso retorna al analista. Si es conforme, el cliente recibe el ticket cerrado.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead o" d="M0 0L10 5L0 10z"/></marker>
+  </defs>
+
+  <!-- carriles -->
+  <rect class="lane a" x="0" y="0" width="1440" height="140"/>
+  <rect class="lane b" x="0" y="140" width="1440" height="140"/>
+  <rect class="lane a" x="0" y="280" width="1440" height="140"/>
+  <rect class="lane b" x="0" y="420" width="1440" height="140"/>
+  <rect class="lane-lbl lane" x="0" y="0" width="100" height="140"/>
+  <rect class="lane-lbl lane" x="0" y="140" width="100" height="140"/>
+  <rect class="lane-lbl lane" x="0" y="280" width="100" height="140"/>
+  <rect class="lane-lbl lane" x="0" y="420" width="100" height="140"/>
+  <text class="lane-txt" transform="translate(56 70) rotate(-90)" text-anchor="middle">Cliente</text>
+  <text class="lane-txt" transform="translate(56 210) rotate(-90)" text-anchor="middle">Analista TI</text>
+  <text class="lane-txt" transform="translate(56 350) rotate(-90)" text-anchor="middle">Especialista TI</text>
+  <text class="lane-txt" transform="translate(56 490) rotate(-90)" text-anchor="middle">Supervisor TI</text>
+
+  <!-- flujos -->
+  <path class="flow" d="M168 70H188" marker-end="url(#arr)"/>
+  <path class="flow" d="M310 70H380V180" marker-end="url(#arr)"/>
+  <path class="flow ret" d="M352 210H250V100" marker-end="url(#arrO)"/>
+  <path class="flow" d="M408 210H438" marker-end="url(#arr)"/>
+  <path class="flow" d="M560 210H600" marker-end="url(#arr)"/>
+  <path class="flow" d="M630 182V155H990V180" marker-end="url(#arr)"/>
+  <path class="flow" d="M658 210H698" marker-end="url(#arr)"/>
+  <path class="flow" d="M820 210H860" marker-end="url(#arr)"/>
+  <path class="flow" d="M918 210H958" marker-end="url(#arr)"/>
+  <path class="flow" d="M890 238V320" marker-end="url(#arr)"/>
+  <path class="flow" d="M950 350H1020V240" marker-end="url(#arr)"/>
+  <path class="flow" d="M1080 210H1150V460" marker-end="url(#arr)"/>
+  <path class="flow" d="M1210 490H1260" marker-end="url(#arr)"/>
+  <path class="flow ret" d="M1290 462V168H1050V180" marker-end="url(#arrO)"/>
+  <path class="flow" d="M1318 490H1380V90" marker-end="url(#arr)"/>
+
+  <!-- Cliente -->
+  <circle class="ev-start" cx="150" cy="70" r="18"/>
+  <text class="t" x="150" y="108">Necesidad</text><text class="t" x="150" y="121">de soporte</text>
+  <rect class="task auto" x="190" y="42" width="120" height="56" rx="8"/>
+  <text class="t" x="250" y="67">Registrar solicitud</text><text class="t" x="250" y="82">con formulario</text>
+  <circle class="ev-end" cx="1380" cy="70" r="18"/>
+  <text class="t" x="1380" y="112">Ticket cerrado</text>
+
+  <!-- Analista -->
+  <polygon class="gw" points="380,182 408,210 380,238 352,210"/>
+  <text class="t" x="380" y="256">¿Solicitud válida?</text>
+  <text class="t s" x="258" y="170" style="font-weight:600;fill:var(--o-700)">No: devolver para completar</text>
+  <text class="t s" x="414" y="202" style="font-weight:600;fill:var(--o-700)">Sí</text>
+
+  <rect class="task auto" x="440" y="182" width="120" height="56" rx="8"/>
+  <text class="t" x="500" y="199">Consultar base</text><text class="t" x="500" y="213">de conocimientos</text><text class="t" x="500" y="227">y autoservicio</text>
+
+  <polygon class="gw" points="630,182 658,210 630,238 602,210"/>
+  <text class="t" x="630" y="256">¿Hay solución en la</text><text class="t" x="630" y="269">base de conocimientos?</text>
+  <text class="t s" x="640" y="149" style="font-weight:600;fill:var(--o-700)">Sí</text>
+  <text class="t s" x="664" y="202" style="font-weight:600;fill:var(--o-700)">No</text>
+
+  <rect class="task" x="700" y="182" width="120" height="56" rx="8"/>
+  <text class="t" x="760" y="207">Analizar caso</text><text class="t" x="760" y="222">(límite máx. 2 h)</text>
+
+  <polygon class="gw" points="890,182 918,210 890,238 862,210"/>
+  <text class="t s" x="902" y="256">¿Resuelto en ≤ 2 h?</text>
+  <text class="t s" x="924" y="202" style="font-weight:600;fill:var(--o-700)">Sí</text>
+  <text class="t s" x="898" y="284" style="font-weight:600;fill:var(--o-700)">No: escalar</text>
+
+  <rect class="task" x="960" y="182" width="120" height="56" rx="8"/>
+  <text class="t" x="1020" y="207">Resolver y registrar</text><text class="t" x="1020" y="222">la solución</text>
+
+  <!-- Especialista -->
+  <rect class="task" x="830" y="322" width="120" height="56" rx="8"/>
+  <text class="t" x="890" y="347">Analizar y resolver</text><text class="t" x="890" y="362">caso escalado</text>
+  <text class="t s" x="960" y="343" style="font-weight:600;fill:var(--o-700)">Devuelve la solución</text>
+
+  <!-- Supervisor -->
+  <rect class="task" x="1090" y="462" width="120" height="56" rx="8"/>
+  <text class="t" x="1150" y="487">Verificar solución</text><text class="t" x="1150" y="502">y cerrar ticket</text>
+  <polygon class="gw" points="1290,462 1318,490 1290,518 1262,490"/>
+  <text class="t" x="1290" y="540">¿Conforme?</text>
+  <text class="t s" x="1296" y="330" style="font-weight:600;fill:var(--o-700)">No: retorna</text>
+  <text class="t s" x="1324" y="482" style="font-weight:600;fill:var(--o-700)">Sí</text>
+</svg>
+      </div>
+      <div class="bpmn-legend" aria-label="Leyenda del diagrama">
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><circle cx="15" cy="10" r="7" class="ev-start"/></svg>Evento de inicio</span>
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><circle cx="15" cy="10" r="7" class="ev-end"/></svg>Evento de fin</span>
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><rect x="3" y="3" width="24" height="14" rx="3" class="task"/></svg>Actividad</span>
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><rect x="3" y="3" width="24" height="14" rx="3" class="task auto"/></svg>Actividad con automatización o base de conocimientos</span>
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><polygon points="15,2 24,10 15,18 6,10" class="gw"/></svg>Compuerta exclusiva</span>
+        <span><svg viewBox="0 0 30 20" aria-hidden="true"><path d="M2 10H28" class="flow ret"/></svg>Retorno</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><span class="tag t-sup">Supuesto</span> &nbsp;<span class="tag t-pend">Pendiente de validar</span></p>
+      <p style="margin-top:10px">Los documentos fijan los carriles, los eventos, las compuertas exclusivas, los retornos y el límite de 2 horas. La secuencia exacta entre actividades es una propuesta de flujo que el equipo debe confirmar, en particular qué ocurre al llegar a las 2 horas y quién valida el retorno de un caso no conforme.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 INDICADORES -->
+<section class="sec" id="indicadores" aria-labelledby="h-ind">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-ind">5. Indicadores</h2>
+      <p>Dos fichas para saber si el rediseño funciona: una mide la rapidez y la otra, el cumplimiento del compromiso de atención.</p>
+    </div>
+
+    <div class="grid g2">
+      <article class="ficha">
+        <header><span>Indicador 1</span><h3>Tiempo Promedio de Resolución de Incidentes (MTTR)</h3></header>
+        <div class="body"><dl>
+          <div class="row"><dt>Fórmula</dt><dd><span class="formula">Tiempo total dedicado a resolver incidentes ÷ Número total de incidentes resueltos</span></dd></div>
+          <div class="row"><dt>Unidad</dt><dd>Horas</dd></div>
+          <div class="row"><dt>Fuente</dt><dd>Sistema de gestión de tickets</dd></div>
+          <div class="row"><dt>Frecuencia</dt><dd>Mensual</dd></div>
+          <div class="row"><dt>Responsable</dt><dd>Supervisor TI</dd></div>
+          <div class="row"><dt>Línea base</dt><dd>Tiempo actual, sin SLA definido.<br><span class="tag t-pend" style="margin-top:8px">Pendiente de validar: valor en horas</span></dd></div>
+          <div class="row"><dt>Meta</dt><dd>Reducción sustancial del tiempo medio de respuesta y resolución.<br><span class="tag t-meta" style="margin-top:8px">Meta propuesta</span> <span class="tag t-pend" style="margin-top:8px">Sin cifra definida</span></dd></div>
+        </dl></div>
+      </article>
+
+      <article class="ficha">
+        <header><span>Indicador 2</span><h3>Porcentaje de Cumplimiento del SLA de Atención</h3></header>
+        <div class="body"><dl>
+          <div class="row"><dt>Fórmula</dt><dd><span class="formula">(Tickets atendidos dentro del SLA ÷ Total de tickets recibidos) × 100</span></dd></div>
+          <div class="row"><dt>Unidad</dt><dd>Porcentaje (%)</dd></div>
+          <div class="row"><dt>Fuente</dt><dd>Reportes del sistema de tickets</dd></div>
+          <div class="row"><dt>Frecuencia</dt><dd>Mensual</dd></div>
+          <div class="row"><dt>Responsable</dt><dd>Supervisor TI / Analista TI</dd></div>
+          <div class="row"><dt>Línea base</dt><dd>0 % (no existía SLA previo).<br><span class="tag t-sup" style="margin-top:8px">Supuesto: confirmar con reportes</span></dd></div>
+          <div class="row"><dt>Meta</dt><dd>≥ 90 % de cumplimiento.<br><span class="tag t-meta" style="margin-top:8px">Meta propuesta</span></dd></div>
+        </dl></div>
+      </article>
+    </div>
+
+    <div class="note">
+      <p><span class="tag t-pend">Pendiente de validar</span></p>
+      <p style="margin-top:10px">Falta definir el valor del SLA (el tiempo objetivo que cuenta como «dentro del SLA»). El límite de 2 horas descrito en el documento corresponde a la regla de escalamiento del TO-BE y no se asumió como SLA.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 SIMULADOR -->
+<section class="sec soft" id="simulador" aria-labelledby="h-sim">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-sim">6. Simulador de indicadores</h2>
+      <p>Ingresa tus propios valores. La página no trae cifras precargadas porque el equipo aún no las proporcionó.</p>
+    </div>
+
+    <div class="sim">
+      <div class="tabs" role="tablist" aria-label="Herramientas del simulador">
+        <button role="tab" id="tab-1" aria-selected="true" aria-controls="p1" type="button">Ahorro por automatización</button>
+        <button role="tab" id="tab-2" aria-selected="false" aria-controls="p2" type="button" tabindex="-1">Cálculo de indicadores</button>
+      </div>
+
+      <!-- Panel 1 -->
+      <div class="panel on" id="p1" role="tabpanel" aria-labelledby="tab-1">
+        <div class="sim-banner"><b>SIMULACIÓN</b><span>Escenario de Simulación TO-BE: Estimación de impacto operativo y financiero basada en parámetros ajustables.</span></div>
+        <div class="sim-grid">
+          <div class="fields">
+            <div class="field">
+              <label for="vol">Volumen mensual de tickets</label>
+              <div class="input-row"><input id="vol" type="number" inputmode="decimal" min="0" step="1" placeholder="Ingresa un valor"><span class="unit">tickets/mes</span></div>
+              <div class="err" id="e-vol" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="pct">Tickets automatizados o resueltos vía base de conocimientos</label>
+              <div class="input-row"><input id="pct" type="number" inputmode="decimal" min="0" max="100" step="1" placeholder="0 a 100"><span class="unit">%</span></div>
+              <input id="pctr" type="range" min="0" max="100" step="1" value="0" aria-label="Ajustar porcentaje automatizado">
+              <div class="err" id="e-pct" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="tmp">Tiempo promedio de análisis manual</label>
+              <div class="input-row"><input id="tmp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ingresa un valor"><span class="unit">horas/ticket</span></div>
+              <div class="err" id="e-tmp" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="cst">Costo por hora del personal TI</label>
+              <div class="input-row"><input id="cst" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Ingresa un valor"><span class="unit">por hora</span></div>
+              <span class="help">Usa la moneda que corresponda; el resultado queda en esa misma moneda.</span>
+              <div class="err" id="e-cst" aria-live="polite"></div>
+            </div>
+            <div class="sim-actions"><button class="btn ghost" type="button" id="reset1">Limpiar valores</button></div>
+          </div>
+
+          <div class="results" aria-live="polite">
+            <div class="res"><small>Tickets resueltos por automatización o base de conocimientos</small><strong id="r-aut">—</strong><code>Volumen × % automatizado</code></div>
+            <div class="res main"><small>Tiempo ahorrado</small><strong id="r-t">—</strong><code>Volumen × % automatizado × tiempo de análisis manual</code></div>
+            <div class="res main"><small>Ahorro económico</small><strong id="r-e">—</strong><code>Tiempo ahorrado × costo por hora</code></div>
+            <div class="res" id="barbox" hidden>
+              <small>Tiempo total de análisis manual del mes</small>
+              <div class="bar" role="img" aria-label="Proporción del tiempo de análisis manual que se ahorra"><i id="bar-s" style="width:0"></i></div>
+              <div class="bar-lbl"><span id="bl-s"></span><span id="bl-r"></span></div>
+            </div>
+            <p id="msg1" style="font-size:.9rem;color:var(--ink-2);margin:0">Completa los cuatro campos para ver el resultado.</p>
+          </div>
+        </div>
+        <div class="note" style="max-width:none">
+          <p><span class="tag t-sup">Supuesto</span></p>
+          <p style="margin-top:10px">La fórmula supone que cada ticket resuelto por la base de conocimientos ahorra el tiempo completo del análisis manual. No descuenta costos de implementación ni de mantenimiento. El resultado es una estimación para comparar escenarios, no un ahorro comprometido.</p>
+        </div>
+      </div>
+
+      <!-- Panel 2 -->
+      <div class="panel" id="p2" role="tabpanel" aria-labelledby="tab-2" hidden>
+        <div class="sim-banner"><b>SIMULACIÓN</b><span>Calculadora de los dos indicadores con las fórmulas de las fichas. Úsala con datos reales del sistema de tickets cuando estén validados.</span></div>
+        <div class="sim-grid">
+          <div class="fields">
+            <h3 class="sub">Indicador 1 · MTTR</h3>
+            <div class="field">
+              <label for="th">Tiempo total dedicado a resolver incidentes</label>
+              <div class="input-row"><input id="th" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ingresa un valor"><span class="unit">horas</span></div>
+              <div class="err" id="e-th" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="nr">Número total de incidentes resueltos</label>
+              <div class="input-row"><input id="nr" type="number" inputmode="decimal" min="0" step="1" placeholder="Ingresa un valor"><span class="unit">incidentes</span></div>
+              <div class="err" id="e-nr" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="bl">Línea base de MTTR (opcional)</label>
+              <div class="input-row"><input id="bl" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Pendiente de validar"><span class="unit">horas</span></div>
+              <span class="help">Si la ingresas, se calcula la variación frente al valor actual.</span>
+              <div class="err" id="e-bl" aria-live="polite"></div>
+            </div>
+            <hr class="sp">
+            <h3 class="sub">Indicador 2 · Cumplimiento del SLA</h3>
+            <div class="field">
+              <label for="ts">Tickets atendidos dentro del SLA</label>
+              <div class="input-row"><input id="ts" type="number" inputmode="decimal" min="0" step="1" placeholder="Ingresa un valor"><span class="unit">tickets</span></div>
+              <div class="err" id="e-ts" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="tt">Total de tickets recibidos</label>
+              <div class="input-row"><input id="tt" type="number" inputmode="decimal" min="0" step="1" placeholder="Ingresa un valor"><span class="unit">tickets</span></div>
+              <div class="err" id="e-tt" aria-live="polite"></div>
+            </div>
+            <div class="sim-actions"><button class="btn ghost" type="button" id="reset2">Limpiar valores</button></div>
+          </div>
+          <div class="results" aria-live="polite">
+            <div class="res main"><small>MTTR</small><strong id="o-mttr">—</strong><code>Tiempo total ÷ incidentes resueltos</code><div id="o-var" style="font-size:.9rem;margin-top:8px;color:var(--ink-2)"></div></div>
+            <div class="res main"><small>Cumplimiento del SLA</small><strong id="o-sla">—</strong><code>(Dentro del SLA ÷ Total recibidos) × 100</code><div id="o-st"></div></div>
+            <p style="font-size:.9rem;color:var(--ink-2);margin:0">Comparación con la meta propuesta de ≥ 90 %. El MTTR no se compara con una meta porque aún no tiene cifra definida.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 IA -->
+<section class="sec" id="ia" aria-labelledby="h-ia">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-ia">7. Qué generó la IA y qué verificó el equipo</h2>
+      <p>La IA aceleró el borrador; las decisiones y la validación fueron del equipo.</p>
+    </div>
+    <div class="grid g3">
+      <article class="card accent ai-col">
+        <h3><span aria-hidden="true">IA</span>Qué generó la IA</h3>
+        <ul>
+          <li>Propuestas iniciales de diagnóstico.</li>
+          <li>Estructura de las fichas de indicadores.</li>
+          <li>Redacción técnica del sustento de decisiones (AV/NAV).</li>
+          <li>Sugerencias para el flujo BPMN TO-BE.</li>
+        </ul>
+      </article>
+      <article class="card accent ai-col">
+        <h3><span aria-hidden="true">✓</span>Qué verificó el equipo</h3>
+        <ul>
+          <li>La coherencia del flujo de procesos AS-IS.</li>
+          <li>Las evidencias en el mapa.</li>
+          <li>La asignación correcta de roles: Analista TI, Especialista TI y Supervisor TI.</li>
+        </ul>
+      </article>
+      <article class="card accent ai-col">
+        <h3><span aria-hidden="true">✎</span>Qué modificó el equipo</h3>
+        <ul>
+          <li>Ajustó los criterios de escalamiento.</li>
+          <li>Priorizó la estrategia de Rediseño sobre la Mejora Incremental en la Decision Room.</li>
+          <li>Validó que el sustento técnico cumpliera con las exigencias del caso.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="note">
+      <p>Esta página se maquetó con IA a partir de los datos entregados por el equipo. Lo que no estaba en esos datos no se completó: aparece como pendiente de validar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTRO -->
+<section class="sec soft" id="registro" aria-labelledby="h-reg">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="h-reg">Metas, supuestos y datos pendientes</h2>
+      <p>Resumen de todo lo que aún no es un dato firme. Filtra por tipo.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrar por tipo">
+      <button type="button" data-f="all" aria-pressed="true">Todo</button>
+      <button type="button" data-f="meta" aria-pressed="false">Metas propuestas</button>
+      <button type="button" data-f="sup" aria-pressed="false">Supuestos</button>
+      <button type="button" data-f="pend" aria-pressed="false">Pendientes de validar</button>
+    </div>
+    <ul class="reg" id="reg">
+      <li data-t="meta"><span class="tag t-meta">Meta propuesta</span><div>Cumplimiento del SLA de al menos 90 %.<span class="where">Indicador 2</span></div></li>
+      <li data-t="meta"><span class="tag t-meta">Meta propuesta</span><div>Reducción sustancial del tiempo medio de respuesta y resolución, sin cifra definida.<span class="where">Indicador 1 · Beneficios esperados</span></div></li>
+      <li data-t="meta"><span class="tag t-meta">Meta propuesta</span><div>Límite máximo de 2 horas para aplicar el escalamiento.<span class="where">TO-BE · BPMN</span></div></li>
+      <li data-t="meta"><span class="tag t-meta">Meta propuesta</span><div>Sustituir o reducir el análisis repetitivo con base de conocimientos y autoservicio.<span class="where">TO-BE</span></div></li>
+
+      <li data-t="sup"><span class="tag t-sup">Supuesto</span><div>La línea base del SLA es 0 % por no existir un SLA previo.<span class="where">Indicador 2</span></div></li>
+      <li data-t="sup"><span class="tag t-sup">Supuesto</span><div>El sistema de tickets registra los tiempos y estados necesarios para calcular ambos indicadores.<span class="where">Indicadores</span></div></li>
+      <li data-t="sup"><span class="tag t-sup">Supuesto</span><div>La vinculación entre exigencias gerenciales e indicadores es una lectura del equipo.<span class="where">Alineación estratégica</span></div></li>
+      <li data-t="sup"><span class="tag t-sup">Supuesto</span><div>La secuencia exacta de actividades del diagrama BPMN TO-BE es una propuesta de flujo.<span class="where">AS-IS / TO-BE</span></div></li>
+      <li data-t="sup"><span class="tag t-sup">Supuesto</span><div>Cada ticket resuelto por la base de conocimientos ahorra el tiempo completo del análisis manual, sin costos de implementación.<span class="where">Simulador</span></div></li>
+
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Valor numérico de la línea base del MTTR, en horas.<span class="where">Indicador 1</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Volumen mensual de tickets y cantidad de incidencias pendientes (cuantificar la evidencia).<span class="where">Diagnóstico · Simulador</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Valor del SLA por tipo o prioridad de ticket. El límite de 2 horas es solo de escalamiento.<span class="where">Indicador 2</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Porcentaje realista de tickets resolubles con base de conocimientos o autoservicio.<span class="where">Simulador</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Tiempo promedio de análisis manual y costo por hora del personal TI.<span class="where">Simulador</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Objetivos institucionales formales a los que se alinea la propuesta.<span class="where">Alineación estratégica</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Criterios finales de escalamiento y definición de «incidencia crítica».<span class="where">AS-IS / TO-BE</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Cambios del TO-BE en la actividad de diagnóstico.<span class="where">AS-IS / TO-BE</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Herramienta para el formulario, la validación automática, la base de conocimientos y el autoservicio.<span class="where">TO-BE</span></div></li>
+      <li data-t="pend"><span class="tag t-pend">Pendiente</span><div>Método para medir la mejora de la experiencia del usuario o cliente.<span class="where">Beneficios esperados</span></div></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Propuesta estratégica de mejora · Proceso de atención de soporte TI</strong></p>
+    <p>Contenido elaborado únicamente con los datos entregados por el equipo. Las cifras que no se proporcionaron figuran como pendientes de validar.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var nf = new Intl.NumberFormat('es-PE',{maximumFractionDigits:2});
+  function $(id){return document.getElementById(id)}
+  function fmt(n){return nf.format(n)}
+
+  /* ---- nav activo ---- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav li a'));
+  var secs = links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){
+            var on = a.getAttribute('href') === '#'+e.target.id;
+            a.classList.toggle('active',on);
+            if(on){a.setAttribute('aria-current','true'); if(a.scrollIntoView){try{a.scrollIntoView({block:'nearest',inline:'center'})}catch(_){}}}
+            else a.removeAttribute('aria-current');
+          });
+        }
+      });
+    },{rootMargin:'-35% 0px -60% 0px'});
+    secs.forEach(function(s){if(s)io.observe(s)});
+  }
+
+  /* ---- comparación ---- */
+  var cmp = $('cmp');
+  document.querySelectorAll('.seg button').forEach(function(b){
+    b.addEventListener('click',function(){
+      cmp.setAttribute('data-view',b.dataset.view);
+      document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    });
+  });
+
+  /* ---- pestañas ---- */
+  var tabs = [$('tab-1'),$('tab-2')], panels=[$('p1'),$('p2')];
+  function selTab(i){
+    tabs.forEach(function(t,k){
+      t.setAttribute('aria-selected',k===i?'true':'false');
+      t.tabIndex = k===i?0:-1;
+      panels[k].classList.toggle('on',k===i);
+      panels[k].hidden = k!==i;
+    });
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){selTab(i)});
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+        var n=(i+(e.key==='ArrowRight'?1:-1)+2)%2; selTab(n); tabs[n].focus();
+      }
+    });
+  });
+
+  /* ---- lectura y validación ---- */
+  function read(id,errId,opts){
+    var el=$(id), raw=el.value.trim(), err=$(errId);
+    el.removeAttribute('aria-invalid'); err.textContent='';
+    if(raw==='') return {empty:true};
+    var v=Number(raw.replace(',','.'));
+    if(!isFinite(v)){bad('Ingresa un número válido.');return {bad:true}}
+    if(v<0){bad('El valor no puede ser negativo.');return {bad:true}}
+    if(opts&&opts.max!=null&&v>opts.max){bad('El valor no puede superar '+opts.max+'.');return {bad:true}}
+    if(opts&&opts.pos&&v===0){bad('Debe ser mayor que cero.');return {bad:true}}
+    return {v:v};
+    function bad(m){el.setAttribute('aria-invalid','true');err.textContent=m}
+  }
+
+  /* ---- simulador 1 ---- */
+  var pct=$('pct'), pctr=$('pctr');
+  pctr.addEventListener('input',function(){pct.value=pctr.value;calc1()});
+  pct.addEventListener('input',function(){
+    var n=Number(pct.value); if(isFinite(n)&&pct.value!==''&&n>=0&&n<=100)pctr.value=n; calc1();
+  });
+  ['vol','tmp','cst'].forEach(function(id){$(id).addEventListener('input',calc1)});
+
+  function calc1(){
+    var a=read('vol','e-vol'), b=read('pct','e-pct',{max:100}), c=read('tmp','e-tmp'), d=read('cst','e-cst');
+    var ids=['r-aut','r-t','r-e'];
+    var ok = [a,b,c,d].every(function(x){return x.v!==undefined});
+    var anyBad = [a,b,c,d].some(function(x){return x.bad});
+    $('barbox').hidden = true;
+    if(!ok){
+      ids.forEach(function(i){$(i).textContent='—'});
+      $('msg1').textContent = anyBad ? 'Corrige los valores marcados para ver el resultado.' : 'Completa los cuatro campos para ver el resultado.';
+      return;
+    }
+    var aut = a.v*(b.v/100);
+    var t = aut*c.v;
+    var e = t*d.v;
+    $('r-aut').textContent = fmt(aut)+' tickets';
+    $('r-t').textContent = fmt(t)+' h/mes';
+    $('r-e').textContent = fmt(e);
+    $('msg1').textContent = 'Resultado de simulación calculado con los valores que ingresaste.';
+    var total = a.v*c.v;
+    if(total>0){
+      $('barbox').hidden=false;
+      $('bar-s').style.width = Math.min(100,(t/total)*100)+'%';
+      $('bl-s').textContent='Ahorrado: '+fmt(t)+' h';
+      $('bl-r').textContent='Restante: '+fmt(Math.max(0,total-t))+' h de '+fmt(total)+' h';
+    }
+  }
+  $('reset1').addEventListener('click',function(){
+    ['vol','pct','tmp','cst'].forEach(function(id){$(id).value=''}); pctr.value=0; calc1();
+  });
+
+  /* ---- simulador 2 ---- */
+  ['th','nr','bl','ts','tt'].forEach(function(id){$(id).addEventListener('input',calc2)});
+  function calc2(){
+    var th=read('th','e-th'), nr=read('nr','e-nr',{pos:true}), bl=read('bl','e-bl');
+    var ts=read('ts','e-ts'), tt=read('tt','e-tt',{pos:true});
+    var mt=$('o-mttr'), vr=$('o-var');
+    vr.textContent='';
+    if(th.v!==undefined && nr.v!==undefined){
+      var m=th.v/nr.v; mt.textContent=fmt(m)+' h';
+      if(bl.v!==undefined && bl.v>0){
+        var ch=((bl.v-m)/bl.v)*100;
+        vr.textContent = ch>=0 ? 'Reducción frente a la línea base: '+fmt(ch)+' %' : 'Aumento frente a la línea base: '+fmt(-ch)+' %';
+      } else vr.textContent='Ingresa la línea base para ver la variación.';
+    } else mt.textContent='—';
+    var sl=$('o-sla'), st=$('o-st'); st.innerHTML='';
+    if(ts.v!==undefined && tt.v!==undefined){
+      if(ts.v>tt.v){$('ts').setAttribute('aria-invalid','true');$('e-ts').textContent='No puede superar el total de tickets recibidos.';sl.textContent='—';return}
+      var p=(ts.v/tt.v)*100; sl.textContent=fmt(p)+' %';
+      var ok=p>=90;
+      st.innerHTML='<span class="status '+(ok?'ok':'no')+'">'+(ok?'Cumple la meta propuesta (≥ 90 %)':'No cumple la meta propuesta (≥ 90 %)')+'</span>';
+    } else sl.textContent='—';
+  }
+  $('reset2').addEventListener('click',function(){
+    ['th','nr','bl','ts','tt'].forEach(function(id){$(id).value=''}); calc2();
+  });
+
+  /* ---- filtros de registro ---- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var f=b.dataset.f;
+      document.querySelectorAll('.filters button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+      document.querySelectorAll('#reg li').forEach(function(li){li.hidden = !(f==='all'||li.dataset.t===f)});
+    });
+  });
+})();
+</script>
+</body>
+</html>
